@@ -242,6 +242,10 @@ void line(float newx, float newy, float newz, float newe) {
   //a[3].delta = (newe-pe)*STEPS_PER_MM;
   long i, j, maxsteps = 0;
 
+  Serial.print(newx);
+  Serial.print(", ");
+  Serial.println(px);
+
   for (i = 0; i < NUM_AXIES; ++i) {
     a[i].absdelta = abs(a[i].delta);
     a[i].over = 0;
@@ -278,23 +282,25 @@ void line(float newx, float newy, float newz, float newe) {
       a[j].over += a[j].absdelta;
       if (a[j].over >= maxsteps) {
         a[j].over -= maxsteps;
-        if(finales()>0)
-        {
-         modo=0;
+        //if(finales()>0)
+        //{
+         //modo=0;
          //Serial.print("EMG");
          //a[j].over = 10;
          //j=NUM_AXIES*100;
          //i=maxsteps;
-         break;
-        }
-        else
-        {
+         //Serial.println("ELSE");
+         //break;
+        //}
+        //else
+        //{
           //Serial.print("MOV");
         digitalWrite(motors[j].step_pin, HIGH);
         delay(1);
         digitalWrite(motors[j].step_pin, LOW);
         delay(1);
-        }
+        //Serial.println("ELSE");
+        //}
       }
     
       
@@ -314,7 +320,7 @@ void line(float newx, float newy, float newz, float newe) {
 #endif
 
   position(newx, newy, newz, newe);
-
+  Serial.println("Posicion Final");
   where();
 }
 
@@ -340,14 +346,11 @@ void ready() {
 }
 
 
-
-
-
 void CNC::home()
 {
   int maxstepsY = 10000;
   for (int iy = 0; iy < maxstepsY; iy++) {
-    digitalWrite(motors[1].dir_pin,  HIGH);
+    digitalWrite(motors[1].dir_pin,  LOW);
     digitalWrite(motors[1].step_pin, HIGH);
     delay(1);
     digitalWrite(motors[1].step_pin, LOW);
@@ -358,8 +361,8 @@ void CNC::home()
     }
   }
   digitalWrite(motors[1].dir_pin,  LOW);
-  int maxstepsX = 20000;
-  for (int ix = 0; ix < maxstepsX; ix++) {
+  long maxstepsX = 150000;
+  for (long ix = 0; ix < maxstepsX; ix++) {
     digitalWrite(motors[0].dir_pin,  LOW);
     digitalWrite(motors[0].step_pin, HIGH);
     delay(1);
@@ -385,12 +388,12 @@ void CNC::home()
   }
   homing = false;
   bandera = 0;
-  line(0, 0, 10, 0);
-  delay(100);
-  line(85, 0, 10, 0);
-  delay(100);
-  line(85, -5, 10, 0);
-  delay(100);
+  line(0, 0, 5, 0);
+  delay(200);
+  line(5, 0, 5, 0);
+  delay(200);
+  line(5, 10, 5, 0);
+  delay(200);
   homing = true;
   position(0, 0, 0, 0);
 }
@@ -429,6 +432,15 @@ void Largo()
 //   }
 }
 
+void CNC::linear(int l_x, int l_y, int l_z, int l_b)
+{
+  line(l_x, l_y, l_z, l_b);
+}
+
+void CNC::VelMotors(float vel)
+{
+  feedrate(vel);
+}
 
 // Ejemplo de proceso
 void Pulido() {

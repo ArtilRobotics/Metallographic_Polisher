@@ -9,9 +9,9 @@ void Metallographic::init()
     pinMode(Rele_Lijas, OUTPUT);
     pinMode(Rele_Refrige, OUTPUT);
     pinMode(Buzzer, OUTPUT);
-    pinMode(FC_X, INPUT);
-    pinMode(FC_Y, INPUT);
-    pinMode(FC_Z, INPUT);
+    pinMode(FC_X, INPUT_PULLUP);
+    pinMode(FC_Y, INPUT_PULLUP);
+    pinMode(FC_Z, INPUT_PULLUP);
 }
 
 void Metallographic::Amoladora(int amo_state)
