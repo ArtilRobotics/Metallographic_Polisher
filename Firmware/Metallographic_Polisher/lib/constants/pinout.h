@@ -40,8 +40,12 @@
 #define MotorZ_dir_pin  7
 #define MotorZ_limit_switch_pin  16
 
-#define MotorB_step_pin  8
-#define MotorB_dir_pin  9
+#define MotorE_step_pin  8
+#define MotorE_dir_pin  9
+#define MotorE_limit_switch_pin  16
+
+#define MotorB_step_pin  10
+#define MotorB_dir_pin  11
 #define MotorB_limit_switch_pin  16
 
 
