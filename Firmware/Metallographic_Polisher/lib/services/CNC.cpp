@@ -14,7 +14,7 @@
 #define STEPS_PER_MM         (STEPS_PER_TURN/1.8)  // (400*16)/0.8 with a M5 spindle 2mm
 #define MAX_FEEDRATE         (1000000)
 #define MIN_FEEDRATE         (1)
-#define NUM_AXIES            (4)
+#define NUM_AXIES            (5)
 
 // for arc directions
 #define ARC_CW          (1)
@@ -55,7 +55,7 @@ int sofar;  // how much is in the buffer
 float fr = 0; // human version
 long step_delay;  // machine version
 
-float px, py, pz, pe; // position
+float px, py, pz, pe, pb; // position
 
 // settings
 char mode_abs = 1; // absolute mode?
@@ -82,9 +82,13 @@ void CNC::init()
   motors[2].dir_pin = MotorZ_dir_pin;
   motors[2].limit_switch_pin = MotorZ_limit_switch_pin;
 
-  motors[3].step_pin = MotorB_step_pin;
-  motors[3].dir_pin = MotorB_dir_pin;
-  motors[3].limit_switch_pin = MotorB_limit_switch_pin;
+  motors[3].step_pin = MotorE_step_pin;
+  motors[3].dir_pin = MotorE_dir_pin;
+  motors[3].limit_switch_pin = MotorE_limit_switch_pin;
+
+  motors[4].step_pin = MotorB_step_pin;
+  motors[4].dir_pin = MotorB_dir_pin;
+  motors[4].limit_switch_pin = MotorB_limit_switch_pin;
 
   int i;
   for (i = 0; i < NUM_AXIES; ++i) {
@@ -180,12 +184,13 @@ void feedrate(float nfr) {
    @input npx new position x
    @input npy new position y
 */
-void position(float npx, float npy, float npz, float npe) {
+void position(float npx, float npy, float npz, float npe, float npb) {
   // here is a good place to add sanity tests
   px = npx;
   py = npy;
   pz = npz;
   pe = npe;
+  pb = npb;
 }
 
 /**
@@ -225,6 +230,7 @@ void where() {
   output("Y", py);
   output("Z", pz);
   output("E", pe);
+  output("B", pb);
   output("F", fr / STEPS_PER_MM * 60);
 //  Serial1.println(mode_abs ? "ABS" : "REL");
 }
@@ -234,11 +240,12 @@ void where() {
    @input newx the destination x position
    @input newy the destination y position
  **/
-void line(float newx, float newy, float newz, float newe) {
+void line(float newx, float newy, float newz, float newe, float newb) {
   a[0].delta = (newx - px) * STEPS_PER_MM;
   a[1].delta = (newy - py) * STEPS_PER_MM;
   a[2].delta = (newz - pz) * STEPS_PER_MM;
   a[3].delta = (newe - pe);
+  a[4].delta = (newb - pb);
   //a[3].delta = (newe-pe)*STEPS_PER_MM;
   long i, j, maxsteps = 0;
 
@@ -319,7 +326,7 @@ void line(float newx, float newy, float newz, float newe) {
   Serial.println(F("< Done."));
 #endif
 
-  position(newx, newy, newz, newe);
+  position(newx, newy, newz, newe, newb);
   Serial.println("Posicion Final");
   where();
 }
@@ -388,14 +395,14 @@ void CNC::home()
   }
   homing = false;
   bandera = 0;
-  line(0, 0, 5, 0);
+  line(0, 0, 5, 0, 0);
   delay(200);
-  line(5, 0, 5, 0);
+  line(5, 0, 5, 0,0);
   delay(200);
-  line(5, 10, 5, 0);
+  line(5, 10, 5, 0,0);
   delay(200);
   homing = true;
-  position(0, 0, 0, 0);
+  position(0, 0, 0, 0,0);
 }
 
 
@@ -432,9 +439,9 @@ void Largo()
 //   }
 }
 
-void CNC::linear(int l_x, int l_y, int l_z, int l_b)
+void CNC::linear(int l_x, int l_y, int l_z, int l_e, int l_b)
 {
-  line(l_x, l_y, l_z, l_b);
+  line(l_x, l_y, l_z, l_e,l_b);
 }
 
 void CNC::VelMotors(float vel)
@@ -447,13 +454,13 @@ void Pulido() {
   int te = 0;
   int deltha = 0;
   int dir = 0;
-  line(0, 0, pz, dir * 1080 - deltha * dir); //40
+  line(0, 0, pz, dir * 1080 - deltha * dir,0); //40
   delay(te);
-  line(0, 0, pz, 0);
+  line(0, 0, pz, 0,0);
   delay(te);
-  line(0, 0, pz, dir * -2430 + deltha * dir); //-90
+  line(0, 0, pz, dir * -2430 + deltha * dir,0); //-90
   delay(te);
-  line(0, 0, pz, 0);
+  line(0, 0, pz, 0,0);
   delay(te);
 }
 
