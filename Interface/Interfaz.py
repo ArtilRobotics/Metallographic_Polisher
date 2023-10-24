@@ -7,6 +7,7 @@ import time
 import cv2
 import numpy as np
 import imutils
+import os
 from PIL import Image, ImageTk
 valx = 0
 valy = 0
@@ -14,19 +15,81 @@ valz = 0
 vale = 0
 valb = 0
 
-customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
-customtkinter.set_default_color_theme("green")  # Themes: "blue" (standard), "green", "dark-blue"
+comando=0
+posx=0
+posy=0
+posz=0
+pose=0
+
+customtkinter.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark", "Light"
+customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
 try:
-    arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
+    #arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
+    arduino = serial.Serial("COM9", 9600, timeout=1)
 except:
     print("Error de coneccion con el puerto")
+
+def recibirDatos():
+
+    while (True):
+        time.sleep(1)
+        global datos, comando, posx, posy, posz, pose
+        datos = arduino.readline().decode()
+        datos = datos.rstrip('\n')
+        #print(datos)
+
+        if (datos != ""):
+            DATASPLIT = datos.split(",")
+            print(DATASPLIT)
+            isReceive = True
+            comando = (DATASPLIT[0])
+            posx = (DATASPLIT[1])
+            posy = (DATASPLIT[2])
+            posz = (DATASPLIT[3])
+            pose = (DATASPLIT[4])
+            
+    
+        actual_posiciones()
+        proceso_actual()
+
+
+        
+def actual_posiciones():
+    global valx,valy,valz,vale
+    if float(comando)==3 and posx!= "" and posy!= "" and posz!= "" and pose!= "":
+        valx=float(posx)
+        valy=float(posy)
+        valz=float(posz)
+        vale=float(pose)
+        text_posicion.set(f" Posición x : {(posx)}\n Posición y : {(posy)}\n Posición z : {(posz)}\n Posición e : {(pose)}")
+
+
+def proceso_actual():
+    global posx
+    if float(comando)==4:
+        match float(posx):
+            case 3:
+                print("Proceso de Corte")
+                posx=0
+            case 4:
+                print("Proceso de Lijado")
+                posx=0
+            case 5:
+                print("Proceso de Pulido")
+                posx=0
+
+
+thread = Thread(target=recibirDatos)
+thread.start()
+      
 
 def sliderpasos_event(valuepasos):
     global valpasos
     valpasos=valuepasos
     text_pasos.set(f"{int(slider_pasos.get())}")
     #print(valx)
+
 
 def envio_pasos():
     dato="3,"+str(valx)+","+str(valy)+","+str(valz)+","+str(vale)+","+str(valb)
@@ -98,6 +161,11 @@ def homming():
     print("SetHome")
 
 def go_home():
+    global valx,valy,valz,vale
+    valx=0
+    valy=0
+    valz=0
+    vale=0
     dato="3,0,0,0,0"
     print(dato)
     arduino.write((dato + '\n').encode())
@@ -239,6 +307,12 @@ def slidervel_event(valuevel):
     arduino.write((dato + '\n').encode())
     arduino.flush()
 
+def salir_interfaz():
+    app.destroy()
+
+def apagar_raspberry():
+    os.system("sudo shutdown -h now") 
+
 ################
 def FindScratches(img):
     # Load the image
@@ -329,14 +403,14 @@ def VisionTest():
         processImg,N_Scratches = FindScratches(frame)
         print('Scratches find:' + str(N_Scratches))
 
-        processImg=imutils.resize(processImg,width=250)
+        processImg=imutils.resize(processImg,width=200)
         processImg=cv2.cvtColor(processImg, cv2.COLOR_BGR2RGB)
         img = Image.fromarray(processImg)
-        camara = ImageTk.PhotoImage(image=img)
-        #camara = customtkinter.CTkImage(dark_image=img,size=(300,300))
-        video_box.configure(image=camara)
-        video_box.image = camara
-        video_box.after(10,iniciar)
+        rev = ImageTk.PhotoImage(image=img)
+        #rev = customtkinter.CTkImage(dark_image=img,size=(300,300))
+        imagen_box.configure(image=rev)
+        imagen_box.image = rev
+        imagen_box.after(10,VisionTest)
 
     
 def iniciar():
@@ -348,9 +422,9 @@ def iniciar():
         img = Image.fromarray(frame)
         camara = ImageTk.PhotoImage(image=img)
         #camara = customtkinter.CTkImage(dark_image=img,size=(300,300))
-        # video_box.configure(image=camara)
-        # video_box.image = camara
-        # video_box.after(10,iniciar)
+        video_box.configure(image=camara)
+        video_box.image = camara
+        video_box.after(10,iniciar)
 
 app = customtkinter.CTk()
 app.wm_attributes('-fullscreen', True)
@@ -444,11 +518,22 @@ tomar_foto = customtkinter.CTkButton(tabview.tab("Verificación Muestra"),text="
 tomar_foto.place(relx=0.557,rely=0.8,anchor=tkinter.NE)
 
 
+titulo_posi = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), text="Posiciones de los Ejes",font=("Arial",20))
+titulo_posi.place(relx=0.327,rely=0.05,anchor=tkinter.NE)
+
+text_posicion=tkinter.StringVar(value="Estableza el home \n para definir \n las posiciones")
+posicion_box = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), width=130,height=90,font=("Arial",17),textvariable=text_posicion)
+posicion_box.place(relx=0.247,rely=0.15,anchor=tkinter.NE)
+
+
+imagen_box = customtkinter.CTkLabel(tabview.tab("Verificación Muestra"), width=200,height=100,text="")
+imagen_box.place(relx=0.67,rely=0.1,anchor=tkinter.NE)
+
 set_home = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Set Home", command=homming)
 set_home.place(relx=0.957,rely=0.85,anchor=tkinter.NE)
     
-go_home = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Go to Home", command=go_home)
-go_home.place(relx=0.707,rely=0.85,anchor=tkinter.NE)
+go_tohome = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Go to Home", command=go_home)
+go_tohome.place(relx=0.727,rely=0.85,anchor=tkinter.NE)
 
 y_pos = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Y Pos",width=60,height=25,command=incremento_y)
 y_pos.place(relx=0.707,rely=0.1,anchor=tkinter.NE)
@@ -487,35 +572,41 @@ pasos_box.place(relx=0.947,rely=0.6,anchor=tkinter.NE)
 slider_vel= tkinter.IntVar(value=0)
 
 velocidad = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), text="Velocidad de las lijas")
-velocidad.place(relx=0.207,rely=0.75,anchor=tkinter.NE)
-slider_velo = customtkinter.CTkSlider(tabview.tab("Control de los ejes"),from_=0,to=50,variable=slider_vel, command=slidervel_event)
-slider_velo.place(relx=0.34,rely=0.85,anchor=tkinter.NE)
+velocidad.place(relx=0.207,rely=0.6,anchor=tkinter.NE)
+slider_velo = customtkinter.CTkSlider(tabview.tab("Control de los ejes"),from_=0,to=100,variable=slider_vel, command=slidervel_event)
+slider_velo.place(relx=0.34,rely=0.7,anchor=tkinter.NE)
 
 
 
 switch_am=customtkinter.StringVar(value="off")
 
 titulo_amoladora = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), text="Amoladora")
-titulo_amoladora.place(relx=0.15,rely=0.55,anchor=tkinter.NE)
+titulo_amoladora.place(relx=0.15,rely=0.42,anchor=tkinter.NE)
 switch_amoladora = customtkinter.CTkSwitch(tabview.tab("Control de los ejes"), text=" ",command=state_amoladora,variable=switch_am,onvalue="on",offvalue="off")
-switch_amoladora.place(relx=0.2,rely=0.63,anchor=tkinter.NE)
+switch_amoladora.place(relx=0.2,rely=0.5,anchor=tkinter.NE)
 
 
 switch_li=customtkinter.StringVar(value="off")
 
 titulo_lijas = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), text="Lijas")
-titulo_lijas.place(relx=0.24,rely=0.55,anchor=tkinter.NE)
+titulo_lijas.place(relx=0.24,rely=0.42,anchor=tkinter.NE)
 switch_lijas = customtkinter.CTkSwitch(tabview.tab("Control de los ejes"), text=" ",command=state_lijas,variable=switch_li,onvalue="on",offvalue="off")
-switch_lijas.place(relx=0.34,rely=0.63,anchor=tkinter.NE)
+switch_lijas.place(relx=0.34,rely=0.5,anchor=tkinter.NE)
 
 
 switch_puli=customtkinter.StringVar(value="off")
 
 titulo_puli = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), text="Pulidora")
-titulo_puli.place(relx=0.4,rely=0.55,anchor=tkinter.NE)
+titulo_puli.place(relx=0.4,rely=0.42,anchor=tkinter.NE)
 switch_puli = customtkinter.CTkSwitch(tabview.tab("Control de los ejes"), text=" ",command=state_pulidora,variable=switch_puli,onvalue="on",offvalue="off")
-switch_puli.place(relx=0.47,rely=0.63,anchor=tkinter.NE)
+switch_puli.place(relx=0.47,rely=0.5,anchor=tkinter.NE)
 
+
+apagar_rasp = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Apagar Raspberry",fg_color="red",hover_color="red" ,command=apagar_raspberry)
+apagar_rasp.place(relx=0.207,rely=0.85,anchor=tkinter.NE)
+    
+exit_interfaz = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Salir de la Interfaz", fg_color="red",hover_color="red",command=salir_interfaz)
+exit_interfaz.place(relx=0.427,rely=0.85,anchor=tkinter.NE)
 
 app.mainloop()
 arduino.close()

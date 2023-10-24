@@ -14,7 +14,7 @@ servo_control = 0
 
 # Serial
 try:
-    arduino = serial.Serial("COM4", 9600, timeout=1)
+    arduino = serial.Serial("COM9", 9600, timeout=1)
 except:
     print("Error de coneccion con el puerto")
 

@@ -10,6 +10,9 @@ Servo myservo;
 int dato;
 int map_vel;
 
+int tiempo_material;
+int tiempo_diametro;
+
 String Pos_Dedo;
 String Pos_Valor;
 String cadena;
@@ -22,7 +25,9 @@ bool homing_cnc = false;
 
 void corte()
 {
-    Ejes_Pulidora.linear(0, 0, 5, 0, 0);
+    Serial.write("4,3,0,0,0");
+    Serial.write('\n');
+    Ejes_Pulidora.linear(5, 0, 0, 0, 0);
     delay(100);
     Ejes_Pulidora.linear(5, 0, 5, 0, 0);
     delay(100);
@@ -33,6 +38,7 @@ void corte()
     digitalWrite(Rele_Amola, HIGH);
     Ejes_Pulidora.linear(5, 50, 110, 0, 0);
     delay(300);
+    
     Ejes_Pulidora.linear(5, 50, 100, 0, 0);
     delay(100);
     digitalWrite(Rele_Amola, LOW);
@@ -44,6 +50,8 @@ void corte()
 
 void lijado()
 {
+    Serial.write("4,4,0,0,0");
+    Serial.write('\n');
     Ejes_Pulidora.linear(395, 0, 0, 0, 0);
     delay(100);
     Ejes_Pulidora.linear(395, 10, 0, 0, 0);
@@ -72,6 +80,8 @@ void lijado()
 
 void pulido()
 {
+    Serial.write("4,5,0,0,0");
+    Serial.write('\n');
     Ejes_Pulidora.linear(890, 0, 0, 0, 0);
     delay(100);
     Ejes_Pulidora.linear(890, 20, 0, 0, 0);
@@ -92,6 +102,7 @@ void pulido()
 void revision()
 {
 
+    Ejes_Pulidora.linear(910, 0, 0, 0, 0);
     digitalWrite(A5, HIGH);
     delay(200);
     digitalWrite(A5, LOW);
@@ -136,11 +147,41 @@ void loop()
     {
 
     case 2:
+
+        switch (datoT[1])
+        {
+        case 1:
+            tiempo_material = 100;
+            datoT[1]=0;
+            break;
+
+        case 2:
+            tiempo_material = 200;
+            datoT[1]=0;
+            break;
+
+        case 3:
+            tiempo_material = 300;
+            datoT[1]=0;
+            break;
+
+        default:
+            break;
+        }
+
         if (datoT[3] == 1)
         {
             corte();
         }
         if (datoT[4] == 1)
+        {
+            lijado();
+        }
+        if (datoT[5] == 1)
+        {
+            pulido();
+        }
+        if (datoT[6] == 1)
         {
             lijado();
         }
