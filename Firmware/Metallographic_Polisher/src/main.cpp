@@ -10,6 +10,11 @@ Servo myservo;
 int dato;
 int map_vel;
 
+int longitud;
+
+int k;
+int j;
+int l;
 int tiempo_material;
 int tiempo_diametro;
 
@@ -25,57 +30,142 @@ bool homing_cnc = false;
 
 void corte()
 {
-    Serial.write("4,3,0,0,0");
+    Serial.write("4,3,0,0,0.05");
     Serial.write('\n');
-    Ejes_Pulidora.linear(5, 0, 0, 0, 0);
-    delay(100);
-    Ejes_Pulidora.linear(5, 0, 5, 0, 0);
-    delay(100);
-    Ejes_Pulidora.linear(5, 50, 5, 0, 0);
-    delay(100);
-    Ejes_Pulidora.linear(5, 50, 100, 0, 0);
-    delay(100);
+    longitud = 0;
+    Serial.write("6,0,0,0,0.1");
+    Serial.write('\n');
+    Ejes_Pulidora.linear(1, longitud, 0, 0, 0);
+    // Serial.write("5,2.5,0,0,0");
+    // Serial.write('\n');
+    delay(200);
+    Serial.write("6,0,0,0,0.15");
+    Serial.write('\n');
+    Ejes_Pulidora.linear(1, longitud, 0, 0, 0);
+    // Serial.write("5,5,0,0,0");
+    // Serial.write('\n');
+    delay(200);
+    Serial.write("6,0,0,0,0.2");
+    Serial.write('\n');
+    Ejes_Pulidora.linear(1, longitud, 100, 0, 0);
     digitalWrite(Rele_Amola, HIGH);
-    Ejes_Pulidora.linear(5, 50, 110, 0, 0);
+    delay(200);
+    for (int n = 115; n < 138; n++)
+    {
+        k = n;
+        Ejes_Pulidora.linear(1, longitud, n, l, 0);
+
+        for (j; j > -1275 + l; j = j - 15)
+        {
+            Serial.write("6,0,0,0,3");
+            Serial.write('\n');
+            Ejes_Pulidora.linear(1, longitud, k, j, 0);
+            delay(5);
+        }
+        l = j;
+        delay(500);
+    }
     delay(300);
-    
-    Ejes_Pulidora.linear(5, 50, 100, 0, 0);
-    delay(100);
+    Serial.write("6,0,0,0,0.7");
+    Serial.write('\n');
+    Ejes_Pulidora.linear(1, longitud, 100, l, 0);
+    delay(200);
     digitalWrite(Rele_Amola, LOW);
-    Ejes_Pulidora.linear(5, 50, 0, 0, 0);
-    delay(100);
-    Ejes_Pulidora.linear(5, 0, 0, 0, 0);
-    // Ejes_Pulidora.linear(10,0,10,1000);
+    Serial.write("6,0,0,0,0.8");
+    Serial.write('\n');
+    Ejes_Pulidora.linear(1, longitud, 0, l, 0);
+    delay(200);
+    Serial.write("6,0,0,0,0.9");
+    Serial.write('\n');
+    Ejes_Pulidora.linear(1, 0, 0, l, 0);
+    delay(200);
+    Serial.write("6,0,0,0,1");
+    Serial.write('\n');
+    Ejes_Pulidora.linear(1, 0, 0, 0, 0);
+    delay(200);
 }
 
 void lijado()
 {
     Serial.write("4,4,0,0,0");
     Serial.write('\n');
-    Ejes_Pulidora.linear(395, 0, 0, 0, 0);
     delay(100);
-    Ejes_Pulidora.linear(395, 10, 0, 0, 0);
+    Serial.write("6,0,0,0,0");
+    Serial.write('\n');
+    Ejes_Pulidora.linear(196, 0, 0, 0, 0);
     delay(100);
-    Ejes_Pulidora.linear(395, 30, 0, 0, 0);
+    Serial.write("6,0,0,0,0.07");
+    Serial.write('\n');
+    delay(200);
+    Ejes_Pulidora.linear(196, 3, 0, 0, 0);
     delay(100);
-    digitalWrite(Rele_Lijas, HIGH);
-    Ejes_Pulidora.linear(395, 35, 0, 0, 0);
+    Serial.write("6,0,0,0,0.14");
+    Serial.write('\n');
+    delay(200);
+    // digitalWrite(Rele_Lijas, HIGH);
+    Ejes_Pulidora.linear(196, 7, 0, 0, 0);
     delay(100);
-    digitalWrite(Rele_Lijas, LOW);
-    Ejes_Pulidora.linear(395, 20, 0, 0, 0);
+    Serial.write("6,0,0,0,0.21");
+    Serial.write('\n');
+    delay(5000);
+    Ejes_Pulidora.linear(196, 3, 0, 0, 0);
     delay(100);
-    Ejes_Pulidora.linear(563, 20, 0, 0, 0);
+    Serial.write("6,0,0,0,0.28");
+    Serial.write('\n');
+    delay(200);
+    Ejes_Pulidora.linear(196, 3, 0, 0, 0);
     delay(100);
-    Ejes_Pulidora.linear(563, 35, 0, 0, 0);
+    Serial.write("6,0,0,0,0.35");
+    Serial.write('\n');
+    delay(200);
+    Ejes_Pulidora.linear(281, 3, 0, 0, 0);
     delay(100);
-    Ejes_Pulidora.linear(563, 20, 0, 0, 0);
+    Serial.write("6,0,0,0,0.42");
+    Serial.write('\n');
+    delay(200);
+    Ejes_Pulidora.linear(281, 3, 0, 400, 0);
     delay(100);
-    Ejes_Pulidora.linear(717, 20, 0, 0, 0);
+    Serial.write("6,0,0,0,0.49");
+    Serial.write('\n');
+    delay(200);
+    Ejes_Pulidora.linear(281, 7, 0, 400, 0);
     delay(100);
-    Ejes_Pulidora.linear(717, 35, 0, 0, 0);
+    Serial.write("6,0,0,0,0.56");
+    Serial.write('\n');
+    delay(5000);
+    Ejes_Pulidora.linear(281, 3, 0, 400, 0);
     delay(100);
-    Ejes_Pulidora.linear(717, 0, 0, 0, 0);
+    Serial.write("6,0,0,0,0.63");
+    Serial.write('\n');
+    delay(200);
+    Ejes_Pulidora.linear(359, 3, 0, 400, 0);
     delay(100);
+    Serial.write("6,0,0,0,0.7");
+    Serial.write('\n');
+    delay(200);
+    Ejes_Pulidora.linear(359, 3, 0, 0, 0);
+    delay(100);
+    Serial.write("6,0,0,0,0.77");
+    Serial.write('\n');
+    delay(200);
+    Ejes_Pulidora.linear(359, 7, 0, 0, 0);
+    delay(100);
+    Serial.write("6,0,0,0,0.8");
+    Serial.write('\n');
+    delay(5000);
+    Ejes_Pulidora.linear(359, 3, 0, 0, 0);
+    delay(100);
+    Serial.write("6,0,0,0,0.9");
+    Serial.write('\n');
+    delay(200);
+    // digitalWrite(Rele_Lijas, LOW);
+    Ejes_Pulidora.linear(359, 0, 0, 0, 0);
+    delay(100);
+    Serial.write("6,0,0,0,1");
+    Serial.write('\n');
+    delay(100);
+    Serial.write("");
+    Serial.write('\n');
 }
 
 void pulido()
@@ -152,17 +242,17 @@ void loop()
         {
         case 1:
             tiempo_material = 100;
-            datoT[1]=0;
+            datoT[1] = 0;
             break;
 
         case 2:
             tiempo_material = 200;
-            datoT[1]=0;
+            datoT[1] = 0;
             break;
 
         case 3:
             tiempo_material = 300;
-            datoT[1]=0;
+            datoT[1] = 0;
             break;
 
         default:
@@ -220,6 +310,7 @@ void loop()
 
     case 9:
         map_vel = map(datoT[1], 0, 100, 60, 160);
+
         myservo.write(map_vel);
         datoT[0] = 0;
         break;

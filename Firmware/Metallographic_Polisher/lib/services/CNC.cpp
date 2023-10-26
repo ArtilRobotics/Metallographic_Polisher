@@ -57,10 +57,10 @@ long step_delay; // machine version
 
 float px, py, pz, pe, pb; // position
 
-char posx[6];
-char posy[6];
-char posz[6];
-char pose[6];
+char posx[8];
+char posy[8];
+char posz[8];
+char pose[8];
 // settings
 char mode_abs = 1; // absolute mode?
 
@@ -71,7 +71,7 @@ int bandera = 0;
 extern int modo;
 bool homing = false;
 
-char posiciones[30];
+char posiciones[70];
 
 void CNC::init()
 {
@@ -343,15 +343,16 @@ void line(float newx, float newy, float newz, float newe, float newb)
 #ifdef VERBOSE
   Serial.println(F("< Done."));
 #endif
+  where();
   position(newx, newy, newz, newe, newb);
-  dtostrf(px,3,2,posx);
-  dtostrf(py,3,2,posy);
-  dtostrf(pz,3,2,posz);
-  dtostrf(pe,3,2,pose);
+  dtostrf(px,4,2,posx);
+  dtostrf(py,4,2,posy);
+  dtostrf(pz,4,2,posz);
+  dtostrf(pe,4,2,pose);
   sprintf(posiciones, "3,%s,%s,%s,%s",posx,posy,posz,pose);
   Serial.write(posiciones);
   Serial.write('\n');
-  where();
+  
 }
 
 // returns angle of dy/dx as a value from 0...2PI
@@ -421,7 +422,7 @@ void CNC::home()
   delay(200);
   line(5, 0, 5, 0, 0);
   delay(200);
-  line(5, 10, 5, 0, 0);
+  line(5, 5, 5, 0, 0);
   delay(200);
   homing = true;
 

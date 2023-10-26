@@ -68,6 +68,7 @@ def actual_posiciones():
 def proceso_actual():
     global posx
     if float(comando)==4:
+        print(comando)
         match float(posx):
             case 3:
                 print("Proceso de Corte")

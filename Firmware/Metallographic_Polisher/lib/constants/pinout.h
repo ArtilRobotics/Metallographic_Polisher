@@ -7,6 +7,9 @@
 #define Rele_Lijas A5
 #define Rele_Refrige A4
 #define miniServo A6
+#define Bomba_Corte 51
+#define Bomba_Pulido 53
+
 
 // #define MotorXA 2
 // #define MotorXB 3
