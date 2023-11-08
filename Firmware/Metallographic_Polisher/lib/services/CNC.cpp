@@ -274,6 +274,7 @@ void line(float newx, float newy, float newz, float newe, float newb)
       maxsteps = a[i].absdelta;
     // set the direction once per movement
     digitalWrite(motors[i].dir_pin, a[i].delta > 0 ? HIGH : LOW);
+    delay(5);
   }
 
   long dt = MAX_FEEDRATE / 5000;
