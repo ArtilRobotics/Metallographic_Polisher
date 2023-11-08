@@ -26,8 +26,8 @@ customtkinter.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
 try:
-    #arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
-    arduino = serial.Serial("COM8", 9600, timeout=1)
+    arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
+    #arduino = serial.Serial("COM8", 9600, timeout=1)
 except:
     print("Error de coneccion con el puerto")
 
@@ -338,7 +338,7 @@ def FindScratches(img):
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
     edges = blurred
     # Use the Hough Circle Transform to detect circles in the image
-    circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, dp=1, minDist=20, param1=50, param2=30, minRadius=200, maxRadius=240)
+    circles = cv2.HoughCircles(blurred, cv2.HOUGH_GRADIENT, dp=1, minDist=20, param1=50, param2=30, minRadius=70, maxRadius=130)
 
     scratches = 0
 
@@ -411,26 +411,28 @@ def video_stream():
     iniciar()
 
 def VisionTest():
+    global N_Scratches
     ret, frame = video.read()
     if ret==True:
         processImg,N_Scratches = FindScratches(frame)
         print('Scratches find:' + str(N_Scratches))
-
-        processImg=imutils.resize(processImg,width=200)
+        text_problems.set(f"{(N_Scratches)}")
+        processImg=imutils.resize(processImg,width=150)
         processImg=cv2.cvtColor(processImg, cv2.COLOR_BGR2RGB)
         img = Image.fromarray(processImg)
         rev = ImageTk.PhotoImage(image=img)
         #rev = customtkinter.CTkImage(dark_image=img,size=(300,300))
         imagen_box.configure(image=rev)
         imagen_box.image = rev
-        imagen_box.after(10,VisionTest)
+        #imagen_box.after(10,VisionTest)
+
 
     
 def iniciar():
     global video
     ret, frame = video.read()
     if ret==True:
-        frame=imutils.resize(frame,width=250)
+        frame=imutils.resize(frame,width=200)
         frame=cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         img = Image.fromarray(frame)
         camara = ImageTk.PhotoImage(image=img)
@@ -447,9 +449,9 @@ app.geometry(f"{700}x{380}")
 tabview = customtkinter.CTkTabview(master=app, width=750,height=400)
 tabview.place(relx=0.5,rely=0.5,anchor=tkinter.CENTER)
 #tabview.grid(row=0, column=1, padx=(20, 20), pady=(20, 0), sticky="nsew")
+tabview.add("Control de los ejes")
 tabview.add("Selección Parámetros")
 tabview.add("Verificación Muestra")
-tabview.add("Control de los ejes")
 tabview.tab("Selección Parámetros")  # configure grid of individual tabs
 tabview.tab("Verificación Muestra")
 tabview.tab("Control de los ejes")
@@ -519,16 +521,38 @@ sidebar_button_2.place(relx=0.947,rely=0.8,anchor=tkinter.NE)
 # textbox.grid(row=0, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
 
-    
+titulo_camara = customtkinter.CTkLabel(tabview.tab("Verificación Muestra"), text="Imagen Camara")
+titulo_camara.place(relx=0.227,rely=0.07,anchor=tkinter.NE)
+
+titulo_foto = customtkinter.CTkLabel(tabview.tab("Verificación Muestra"), text="Imagen Procesada")
+titulo_foto.place(relx=0.527,rely=0.07,anchor=tkinter.NE)
 
 video_box = customtkinter.CTkLabel(tabview.tab("Verificación Muestra"), width=200,height=100,text="")
-video_box.place(relx=0.37,rely=0.1,anchor=tkinter.NE)
+video_box.place(relx=0.30,rely=0.2,anchor=tkinter.NE)
 
-act_video = customtkinter.CTkButton(tabview.tab("Verificación Muestra"),text="Activar Camara",command=video_stream)
-act_video.place(relx=0.257,rely=0.7,anchor=tkinter.NE)
+state_camara= tkinter.StringVar(value="disabled")
 
-tomar_foto = customtkinter.CTkButton(tabview.tab("Verificación Muestra"),text="Tomar Foto",command=VisionTest)
-tomar_foto.place(relx=0.557,rely=0.8,anchor=tkinter.NE)
+act_video = customtkinter.CTkButton(tabview.tab("Verificación Muestra"),text="Activar Camara",command=video_stream, state="normal")
+act_video.place(relx=0.257,rely=0.75,anchor=tkinter.NE)
+
+tomar_foto = customtkinter.CTkButton(tabview.tab("Verificación Muestra"),text="Capturar Probeta",command=VisionTest)
+tomar_foto.place(relx=0.557,rely=0.75,anchor=tkinter.NE)
+
+aceptar_pro = customtkinter.CTkButton(tabview.tab("Verificación Muestra"),text="Probeta Aceptada",fg_color="green",hover_color="green")
+aceptar_pro.place(relx=0.917,rely=0.40,anchor=tkinter.NE)
+
+rechazar_pro = customtkinter.CTkButton(tabview.tab("Verificación Muestra"),text="Probeta Rechazada",fg_color="red",hover_color="red")
+rechazar_pro.place(relx=0.917,rely=0.55,anchor=tkinter.NE)
+
+imagen_box = customtkinter.CTkLabel(tabview.tab("Verificación Muestra"), width=200,height=100,text="")
+imagen_box.place(relx=0.60,rely=0.2,anchor=tkinter.NE)
+
+n_problems = customtkinter.CTkLabel(tabview.tab("Verificación Muestra"), text="Cantidad Aproximada de defectos")
+n_problems.place(relx=0.957,rely=0.07,anchor=tkinter.NE)
+
+text_problems=tkinter.StringVar(value="0")
+pasos_box = customtkinter.CTkLabel(tabview.tab("Verificación Muestra"), width=60,height=25,textvariable=text_problems)
+pasos_box.place(relx=0.857,rely=0.15,anchor=tkinter.NE)
 
 
 titulo_posi = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), text="Posiciones de los Ejes",font=("Arial",20))
@@ -538,9 +562,6 @@ text_posicion=tkinter.StringVar(value="Estableza el home \n para definir \n las 
 posicion_box = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), width=130,height=90,font=("Arial",17),textvariable=text_posicion)
 posicion_box.place(relx=0.247,rely=0.15,anchor=tkinter.NE)
 
-
-imagen_box = customtkinter.CTkLabel(tabview.tab("Verificación Muestra"), width=200,height=100,text="")
-imagen_box.place(relx=0.67,rely=0.1,anchor=tkinter.NE)
 
 set_home = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Set Home", command=homming)
 set_home.place(relx=0.957,rely=0.85,anchor=tkinter.NE)
@@ -623,18 +644,20 @@ exit_interfaz.place(relx=0.427,rely=0.85,anchor=tkinter.NE)
 
 
 proceso_text=tkinter.StringVar(value=" Proceso:")
-proceso_box = customtkinter.CTkLabel(master=app, width=10,height=30,justify="right",fg_color="transparent",font=("Arial",17),textvariable=proceso_text,compound="left")
-proceso_box.place(relx=0.346,rely=0.685,anchor=tkinter.NE)
+proceso_box = customtkinter.CTkLabel(master=app, width=10,height=30,justify="right",fg_color="transparent",font=("Arial",14),textvariable=proceso_text,compound="left")
+proceso_box.place(relx=0.146,rely=0.925,anchor=tkinter.NE)
 
 pro_text=tkinter.StringVar(value="Lijado ")
-pro_box = customtkinter.CTkLabel(master=app, width=10,height=30,justify="right",fg_color="transparent",font=("Arial",17),textvariable=pro_text,compound="left")
-pro_box.place(relx=0.380,rely=0.685,anchor=tkinter.NE)
+pro_box = customtkinter.CTkLabel(master=app, width=10,height=30,justify="right",fg_color="transparent",font=("Arial",14),text_color="black",textvariable=pro_text,compound="left")
+pro_box.place(relx=0.24,rely=0.925,anchor=tkinter.NE)
 
 progre_text=tkinter.StringVar(value="Estado: ")
-progre_box = customtkinter.CTkLabel(master=app, width=10,height=30,justify="right",fg_color="transparent",font=("Arial",17),textvariable=progre_text,compound="left")
-progre_box.place(relx=0.506,rely=0.685,anchor=tkinter.NE)
+progre_box = customtkinter.CTkLabel(master=app, width=10,height=30,justify="right",fg_color="transparent",font=("Arial",14),textvariable=progre_text,compound="left")
+progre_box.place(relx=0.506,rely=0.925,anchor=tkinter.NE)
 
-progresion = customtkinter.CTkProgressBar(master=app,width=300,height=10)
-progresion.place(relx=0.676,rely=0.695,anchor=tkinter.NE)
+progre_vel= tkinter.IntVar(value=0)
+
+progresion = customtkinter.CTkProgressBar(master=app,width=300,height=10, variable=progre_vel)
+progresion.place(relx=0.926,rely=0.945,anchor=tkinter.NE)
 app.mainloop()
 arduino.close()
