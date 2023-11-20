@@ -11,6 +11,7 @@ int dato;
 int map_vel;
 
 int longitud = 0;
+int diametro = 0;
 
 int k;
 int j;
@@ -42,10 +43,10 @@ void corte()
     delay(200);
     Serial.write("6,0,0,0,0.4");
     Serial.write('\n');
-    Ejes_Pulidora.linear(1, longitud, 100, 0, 0);
+    Ejes_Pulidora.linear(1, longitud, 100 + diametro, 0, 0);
     digitalWrite(Rele_Amola, HIGH);
     delay(200);
-    for (int n = 115; n < 138; n++)
+    for (int n = 115 + diametro; n < 138; n++)
     {
         Serial.write("6,0,0,0,0.5");
         Serial.write('\n');
@@ -348,6 +349,15 @@ void loop()
             break;
         }
 
+        if (datoT[2] == 2)
+        {
+            diametro = 2;
+        }
+        if (datoT[2] == 3)
+        {
+            diametro = 4;
+        }
+
         if (datoT[3] == 1)
         {
             corte();
@@ -417,6 +427,11 @@ void loop()
         datoT[0] = 0;
         break;
 
+    case 13:
+        pulido();
+        datoT[0] = 0;
+        break;
+
     default:
         break;
     }
@@ -434,11 +449,11 @@ void loop()
         break;
     }
 
-    if (datoT[0]==21)
+    if (datoT[0] == 21)
     {
-        longitud=datoT[1];
+        longitud = datoT[1];
     }
-    
+
     // if (datoT[5] == 2)
     // {
     // }

@@ -356,9 +356,7 @@ def aprob_probeta():
     arduino.flush()
 
 def rechaz_probeta():
-    dato="12"
-    arduino.write((dato + '\n').encode())
-    arduino.flush()
+    inspeccion()
 
 def slidervel_event(distancia):
     global dis_probeta
@@ -493,19 +491,15 @@ def iniciar():
 
 def inspeccion():
     if N_Scratches > 30:
-        dato="17,1,0,0,0,0"
+        dato="12"
         arduino.write((dato + '\n').encode())
         arduino.flush()
         text_inspec.set(f"Se recomienda lijar y pulir la probeta")
     elif N_Scratches > 20:
-        dato="17,2,0,0,0,0"
+        dato="13"
         arduino.write((dato + '\n').encode())
         arduino.flush()
         text_inspec.set(f"Se recomienda pulir la probeta")
-
-
-
-
 
 
 
