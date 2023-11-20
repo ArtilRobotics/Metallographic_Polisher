@@ -26,8 +26,8 @@ customtkinter.set_appearance_mode("Light")  # Modes: "System" (standard), "Dark"
 customtkinter.set_default_color_theme("blue")  # Themes: "blue" (standard), "green", "dark-blue"
 
 try:
-    arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
-    #arduino = serial.Serial("COM8", 9600, timeout=1)
+    #arduino = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
+    arduino = serial.Serial("COM8", 9600, timeout=1)
 except:
     print("Error de coneccion con el puerto")
 
@@ -76,12 +76,19 @@ def proceso_actual():
     if float(comando)==4:
         if float(posx)==3:
             print("Proceso de Corte")
+            pro_text.set(f"Corte")
             posx=0
         elif float(posx)==4:
             print("Proceso de Lijado")
+            pro_text.set(f"Lijado")
             posx=0
         elif float(posx)==5:
             print("Proceso de Pulido")
+            pro_text.set(f"Pulido")
+            posx=0
+        elif float(posx)==6:
+            print("Proceso de Inspeccion")
+            pro_text.set(f"Inspección")
             posx=0
 
 
@@ -99,7 +106,14 @@ def sliderpasos_event(valuepasos):
     global valpasos
     valpasos=int(valuepasos)
     text_pasos.set(f"{int(slider_pasos.get())}")
-    #print(valx)
+
+def sliderdistancia(valuedis):
+    global val_distancia
+    val_distancia=int(valuedis)
+    text_distancia.set(f"{int(slider_distan.get())}")
+    dato="21,"+str(val_distancia)
+    arduino.write((dato + '\n').encode())
+    arduino.flush()
 
 
 def envio_pasos():
@@ -307,11 +321,21 @@ def state_lijas():
         arduino.flush()
 
 def state_pulidora():
+    global valb
     if switch_puli.get() == "on":
-        global valb
-        valb=valb+(2*100);
-        envio_pasos()
+        valb=2
+        dato="20,0,0,0,0,2"
+        print(dato)
+        arduino.write((dato + '\n').encode())
+        arduino.flush()
 
+    if switch_puli.get() == "off":
+
+        dato="20,0,0,0,0,3"
+        valb=3
+        print(dato)
+        arduino.write((dato + '\n').encode())
+        arduino.flush()
 
 def slidervel_event(valuevel):
     global valvel
@@ -319,6 +343,24 @@ def slidervel_event(valuevel):
     dato="9,"+str(valvel)
     arduino.write((dato + '\n').encode())
     arduino.flush()
+
+def aprob_probeta():
+    dato="11"
+    arduino.write((dato + '\n').encode())
+    arduino.flush()
+
+def rechaz_probeta():
+    dato="12"
+    arduino.write((dato + '\n').encode())
+    arduino.flush()
+
+def slidervel_event(distancia):
+    global dis_probeta
+    dis_probeta=distancia
+    dato="13,"+str(dis_probeta)
+    arduino.write((dato + '\n').encode())
+    arduino.flush()
+
 
 def salir_interfaz():
     app.destroy()
@@ -499,6 +541,17 @@ sidebar_button_1.place(relx=0.747,rely=0.8,anchor=tkinter.NE)
 sidebar_button_2 = customtkinter.CTkButton(tabview.tab("Selección Parámetros"),text="Iniciar", command=enviar_seleccion)
 sidebar_button_2.place(relx=0.947,rely=0.8,anchor=tkinter.NE)
 
+distancia_pro = customtkinter.CTkLabel(tabview.tab("Selección Parámetros"), text="Longitud de la probeta")
+distancia_pro.place(relx=0.207,rely=0.6,anchor=tkinter.NE)
+
+slider_dis= tkinter.IntVar(value=0)
+
+slider_distan = customtkinter.CTkSlider(tabview.tab("Selección Parámetros"),from_=0,to=100,variable=slider_dis, command=sliderdistancia)
+slider_distan.place(relx=0.34,rely=0.7,anchor=tkinter.NE)
+
+text_distancia=tkinter.StringVar(value="")
+distancia_box = customtkinter.CTkLabel(tabview.tab("Selección Parámetros"), width=60,height=25,textvariable=text_distancia)
+distancia_box.place(relx=0.44,rely=0.7,anchor=tkinter.NE)
 
 # textbox = customtkinter.CTkTextbox(tabview.tab("Selección Parámetros"), width=250)
 # textbox.grid(row=5, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
@@ -538,10 +591,10 @@ act_video.place(relx=0.257,rely=0.75,anchor=tkinter.NE)
 tomar_foto = customtkinter.CTkButton(tabview.tab("Verificación Muestra"),text="Capturar Probeta",command=VisionTest)
 tomar_foto.place(relx=0.557,rely=0.75,anchor=tkinter.NE)
 
-aceptar_pro = customtkinter.CTkButton(tabview.tab("Verificación Muestra"),text="Probeta Aceptada",fg_color="green",hover_color="green")
+aceptar_pro = customtkinter.CTkButton(tabview.tab("Verificación Muestra"),text="Probeta Aceptada",fg_color="green",hover_color="green", command=aprob_probeta)
 aceptar_pro.place(relx=0.917,rely=0.40,anchor=tkinter.NE)
 
-rechazar_pro = customtkinter.CTkButton(tabview.tab("Verificación Muestra"),text="Probeta Rechazada",fg_color="red",hover_color="red")
+rechazar_pro = customtkinter.CTkButton(tabview.tab("Verificación Muestra"),text="Probeta Rechazada",fg_color="red",hover_color="red",command=rechaz_probeta)
 rechazar_pro.place(relx=0.917,rely=0.55,anchor=tkinter.NE)
 
 imagen_box = customtkinter.CTkLabel(tabview.tab("Verificación Muestra"), width=200,height=100,text="")
@@ -647,7 +700,7 @@ proceso_text=tkinter.StringVar(value=" Proceso:")
 proceso_box = customtkinter.CTkLabel(master=app, width=10,height=30,justify="right",fg_color="transparent",font=("Arial",14),textvariable=proceso_text,compound="left")
 proceso_box.place(relx=0.146,rely=0.925,anchor=tkinter.NE)
 
-pro_text=tkinter.StringVar(value="Lijado ")
+pro_text=tkinter.StringVar(value="")
 pro_box = customtkinter.CTkLabel(master=app, width=10,height=30,justify="right",fg_color="transparent",font=("Arial",14),text_color="black",textvariable=pro_text,compound="left")
 pro_box.place(relx=0.24,rely=0.925,anchor=tkinter.NE)
 

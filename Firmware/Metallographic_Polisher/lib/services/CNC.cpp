@@ -14,7 +14,7 @@
 #define STEPS_PER_MM (STEPS_PER_TURN / 1.8) // (400*16)/0.8 with a M5 spindle 2mm
 #define MAX_FEEDRATE (1000000)
 #define MIN_FEEDRATE (1)
-#define NUM_AXIES (5)
+#define NUM_AXIES (4)
 
 // for arc directions
 #define ARC_CW (1)
@@ -92,9 +92,9 @@ void CNC::init()
   motors[3].dir_pin = MotorE_dir_pin;
   motors[3].limit_switch_pin = MotorE_limit_switch_pin;
 
-  motors[4].step_pin = MotorB_step_pin;
-  motors[4].dir_pin = MotorB_dir_pin;
-  motors[4].limit_switch_pin = MotorB_limit_switch_pin;
+  // motors[4].step_pin = MotorB_step_pin;
+  // motors[4].dir_pin = MotorB_dir_pin;
+  // motors[4].limit_switch_pin = MotorB_limit_switch_pin;
 
   int i;
   for (i = 0; i < NUM_AXIES; ++i)
@@ -103,6 +103,8 @@ void CNC::init()
     pinMode(motors[i].step_pin, OUTPUT);
     pinMode(motors[i].dir_pin, OUTPUT);
     pinMode(motors[i].enable_pin, OUTPUT);
+    pinMode(10, OUTPUT);
+    pinMode(11, OUTPUT);
   }
 }
 
@@ -199,7 +201,7 @@ void position(float npx, float npy, float npz, float npe, float npb)
   py = npy;
   pz = npz;
   pe = npe;
-  pb = npb;
+  //pb = npb;
 }
 
 /**
@@ -258,7 +260,6 @@ void line(float newx, float newy, float newz, float newe, float newb)
   a[1].delta = (newy - py) * STEPS_PER_MM;
   a[2].delta = (newz - pz) * STEPS_PER_MM;
   a[3].delta = (newe - pe);
-  a[4].delta = (newb - pb);
   // a[3].delta = (newe-pe)*STEPS_PER_MM;
   long i, j, maxsteps = 0;
 
