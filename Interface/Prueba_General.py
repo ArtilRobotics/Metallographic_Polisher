@@ -247,14 +247,20 @@ def sidebar_button_event():
 def enviar_seleccion():
     global material,diametro
     if material == "1":
-        print("Acero")
+        print("Acero 1")
         mate="1"
     elif material == "2":
-        print("Aluminio")
+        print("Acero 2")
         mate="2"
     elif material == "3":
-        print("Cobre")
+        print("Acero 3")
         mate="3"
+    elif material == "4":
+        print("Aluminio")
+        mate="4"
+    elif material == "5":
+        print("Cobre")
+        mate="5"
 
     if diametro == "1":
         print("12mm")
@@ -483,6 +489,27 @@ def iniciar():
         video_box.image = camara
         video_box.after(10,iniciar)
 
+
+
+def inspeccion():
+    if N_Scratches > 30:
+        dato="17,1,0,0,0,0"
+        arduino.write((dato + '\n').encode())
+        arduino.flush()
+        text_inspec.set(f"Se recomienda lijar y pulir la probeta")
+    elif N_Scratches > 20:
+        dato="17,2,0,0,0,0"
+        arduino.write((dato + '\n').encode())
+        arduino.flush()
+        text_inspec.set(f"Se recomienda pulir la probeta")
+
+
+
+
+
+
+
+
 app = customtkinter.CTk()
 app.wm_attributes('-fullscreen', True)
 app.title("CustomTkinter complex_example.py")
@@ -491,23 +518,27 @@ app.geometry(f"{700}x{380}")
 tabview = customtkinter.CTkTabview(master=app, width=750,height=400)
 tabview.place(relx=0.5,rely=0.5,anchor=tkinter.CENTER)
 #tabview.grid(row=0, column=1, padx=(20, 20), pady=(20, 0), sticky="nsew")
-tabview.add("Control de los ejes")
+tabview.add(" Control Manual ")
 tabview.add("Selección Parámetros")
 tabview.add("Verificación Muestra")
 tabview.tab("Selección Parámetros")  # configure grid of individual tabs
 tabview.tab("Verificación Muestra")
-tabview.tab("Control de los ejes")
+tabview.tab(" Control Manual ")
 
 
 label_radio_group = customtkinter.CTkLabel(tabview.tab("Selección Parámetros"), text="Seleccionar Material")
 label_radio_group.place(relx=0.247,rely=0.05,anchor=tkinter.NE)
-material_menu = tkinter.IntVar(value=3)
-radio_button_1 = customtkinter.CTkRadioButton(tabview.tab("Selección Parámetros"),text="Acero", command=material1,variable=material_menu, value=0)
+material_menu = tkinter.IntVar(value=6)
+radio_button_1 = customtkinter.CTkRadioButton(tabview.tab("Selección Parámetros"),text="Acero 1", command=material1,variable=material_menu, value=0)
 radio_button_1.place(relx=0.247,rely=0.15,anchor=tkinter.NE)
-radio_button_2 = customtkinter.CTkRadioButton(tabview.tab("Selección Parámetros"), text="Aluminio",command=material2,variable=material_menu, value=1)
+radio_button_2 = customtkinter.CTkRadioButton(tabview.tab("Selección Parámetros"), text="Acero 2",command=material2,variable=material_menu, value=1)
 radio_button_2.place(relx=0.247,rely=0.25,anchor=tkinter.NE)
-radio_button_3 = customtkinter.CTkRadioButton(tabview.tab("Selección Parámetros"), text="Cobre",command=material3,variable=material_menu, value=2)
+radio_button_3 = customtkinter.CTkRadioButton(tabview.tab("Selección Parámetros"), text="Acero 3",command=material3,variable=material_menu, value=2)
 radio_button_3.place(relx=0.247,rely=0.35,anchor=tkinter.NE)
+radio_button_4 = customtkinter.CTkRadioButton(tabview.tab("Selección Parámetros"), text="Aluminio",command=material3,variable=material_menu, value=3)
+radio_button_4.place(relx=0.247,rely=0.45,anchor=tkinter.NE)
+radio_button_5 = customtkinter.CTkRadioButton(tabview.tab("Selección Parámetros"), text="Cobre",command=material3,variable=material_menu, value=4)
+radio_button_5.place(relx=0.247,rely=0.55,anchor=tkinter.NE)
 
 label_radio_group = customtkinter.CTkLabel(tabview.tab("Selección Parámetros"), text="Seleccionar Diametro")
 label_radio_group.place(relx=0.547,rely=0.05,anchor=tkinter.NE)
@@ -542,16 +573,16 @@ sidebar_button_2 = customtkinter.CTkButton(tabview.tab("Selección Parámetros")
 sidebar_button_2.place(relx=0.947,rely=0.8,anchor=tkinter.NE)
 
 distancia_pro = customtkinter.CTkLabel(tabview.tab("Selección Parámetros"), text="Longitud de la probeta")
-distancia_pro.place(relx=0.207,rely=0.6,anchor=tkinter.NE)
+distancia_pro.place(relx=0.207,rely=0.7,anchor=tkinter.NE)
 
 slider_dis= tkinter.IntVar(value=0)
 
 slider_distan = customtkinter.CTkSlider(tabview.tab("Selección Parámetros"),from_=0,to=100,variable=slider_dis, command=sliderdistancia)
-slider_distan.place(relx=0.34,rely=0.7,anchor=tkinter.NE)
+slider_distan.place(relx=0.34,rely=0.8,anchor=tkinter.NE)
 
 text_distancia=tkinter.StringVar(value="")
 distancia_box = customtkinter.CTkLabel(tabview.tab("Selección Parámetros"), width=60,height=25,textvariable=text_distancia)
-distancia_box.place(relx=0.44,rely=0.7,anchor=tkinter.NE)
+distancia_box.place(relx=0.44,rely=0.8,anchor=tkinter.NE)
 
 # textbox = customtkinter.CTkTextbox(tabview.tab("Selección Parámetros"), width=250)
 # textbox.grid(row=5, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
@@ -570,7 +601,7 @@ distancia_box.place(relx=0.44,rely=0.7,anchor=tkinter.NE)
 # boton_rech = customtkinter.CTkButton(tabview.tab("Verificación Muestra"),text="Iniciar")
 # boton_rech.grid(row=1, column=3, padx=20, pady=10)
 
-# textbox = customtkinter.CTkTextbox(tabview.tab("Control de los ejes"), width=200)
+# textbox = customtkinter.CTkTextbox(tabview.tab(" Control Manual "), width=200)
 # textbox.grid(row=0, column=0, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
 
@@ -608,91 +639,101 @@ pasos_box = customtkinter.CTkLabel(tabview.tab("Verificación Muestra"), width=6
 pasos_box.place(relx=0.857,rely=0.15,anchor=tkinter.NE)
 
 
-titulo_posi = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), text="Posiciones de los Ejes",font=("Arial",20))
+resol_inspec = customtkinter.CTkLabel(tabview.tab("Verificación Muestra"), font=("Arial",14),text="Recomendación de la Inspección")
+resol_inspec.place(relx=0.957,rely=0.7,anchor=tkinter.NE)
+
+text_inspec=tkinter.StringVar(value=" ")
+resol_inspec = customtkinter.CTkLabel(tabview.tab("Verificación Muestra"), textvariable=text_inspec)
+resol_inspec.place(relx=0.957,rely=0.8,anchor=tkinter.NE)
+
+
+
+
+titulo_posi = customtkinter.CTkLabel(tabview.tab(" Control Manual "), text="Posiciones de los Ejes",font=("Arial",20))
 titulo_posi.place(relx=0.327,rely=0.05,anchor=tkinter.NE)
 
 text_posicion=tkinter.StringVar(value="Estableza el home \n para definir \n las posiciones")
-posicion_box = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), width=130,height=90,font=("Arial",17),textvariable=text_posicion)
+posicion_box = customtkinter.CTkLabel(tabview.tab(" Control Manual "), width=130,height=90,font=("Arial",17),textvariable=text_posicion)
 posicion_box.place(relx=0.247,rely=0.15,anchor=tkinter.NE)
 
 
-set_home = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Set Home", command=homming)
+set_home = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="Set Home", command=homming)
 set_home.place(relx=0.957,rely=0.85,anchor=tkinter.NE)
     
-go_tohome = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Go to Home", command=go_home)
+go_tohome = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="Go to Home", command=go_home)
 go_tohome.place(relx=0.727,rely=0.85,anchor=tkinter.NE)
 
-y_pos = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Y Pos",width=60,height=25,command=incremento_y)
+y_pos = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="Y Pos",width=60,height=25,command=incremento_y)
 y_pos.place(relx=0.707,rely=0.1,anchor=tkinter.NE)
-y_neg = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Y Neg",width=60,height=25,command=decremento_y)
+y_neg = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="Y Neg",width=60,height=25,command=decremento_y)
 y_neg.place(relx=0.707,rely=0.3,anchor=tkinter.NE)
-x_pos = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="X Pos",width=60,height=25,command=incremento_x)
+x_pos = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="X Pos",width=60,height=25,command=incremento_x)
 x_pos.place(relx=0.807,rely=0.2,anchor=tkinter.NE)
-x_neg = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="X Neg",width=60,height=25,command=decremento_x)
+x_neg = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="X Neg",width=60,height=25,command=decremento_x)
 x_neg.place(relx=0.607,rely=0.2,anchor=tkinter.NE)
-z_pos = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Z Pos",width=60,height=25,command=incremento_z)
+z_pos = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="Z Pos",width=60,height=25,command=incremento_z)
 z_pos.place(relx=0.927,rely=0.3,anchor=tkinter.NE)
-z_neg = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Z Neg",width=60,height=25,command=decremento_z)
+z_neg = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="Z Neg",width=60,height=25,command=decremento_z)
 z_neg.place(relx=0.927,rely=0.1,anchor=tkinter.NE)
-e_pos = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="E Pos",width=60,height=25,command=incremento_e)
+e_pos = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="E Pos",width=60,height=25,command=incremento_e)
 e_pos.place(relx=0.807,rely=0.43,anchor=tkinter.NE)
-e_neg = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="E Neg",width=60,height=25,command=decremento_e)
+e_neg = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="E Neg",width=60,height=25,command=decremento_e)
 e_neg.place(relx=0.607,rely=0.43,anchor=tkinter.NE)
-# b_pos = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="B Pos",width=60,height=25,command=incremento_b)
+# b_pos = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="B Pos",width=60,height=25,command=incremento_b)
 # b_pos.place(relx=0.947,rely=0.9,anchor=tkinter.NE)
-# b_neg = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="B Neg",width=60,height=25,command=decremento_b)
+# b_neg = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="B Neg",width=60,height=25,command=decremento_b)
 # b_neg.place(relx=0.947,rely=0.9,anchor=tkinter.NE)
 
 
 slider_inicial= tkinter.IntVar(value=1)
 
-pasos = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), text="Cantidad Pasos")
+pasos = customtkinter.CTkLabel(tabview.tab(" Control Manual "), text="Cantidad Pasos")
 pasos.place(relx=0.657,rely=0.57,anchor=tkinter.NE)
-slider_pasos = customtkinter.CTkSlider(tabview.tab("Control de los ejes"),from_=1,to=50,number_of_steps=50,variable=slider_inicial, command=sliderpasos_event)
+slider_pasos = customtkinter.CTkSlider(tabview.tab(" Control Manual "),from_=1,to=50,number_of_steps=50,variable=slider_inicial, command=sliderpasos_event)
 slider_pasos.place(relx=0.847,rely=0.67,anchor=tkinter.NE)
 
 text_pasos=tkinter.StringVar(value="")
-pasos_box = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), width=60,height=25,textvariable=text_pasos)
+pasos_box = customtkinter.CTkLabel(tabview.tab(" Control Manual "), width=60,height=25,textvariable=text_pasos)
 pasos_box.place(relx=0.947,rely=0.6,anchor=tkinter.NE)
 
 
 slider_vel= tkinter.IntVar(value=0)
 
-velocidad = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), text="Velocidad de las lijas")
+velocidad = customtkinter.CTkLabel(tabview.tab(" Control Manual "), text="Velocidad de las lijas")
 velocidad.place(relx=0.207,rely=0.6,anchor=tkinter.NE)
-slider_velo = customtkinter.CTkSlider(tabview.tab("Control de los ejes"),from_=0,to=100,variable=slider_vel, command=slidervel_event)
+slider_velo = customtkinter.CTkSlider(tabview.tab(" Control Manual "),from_=0,to=100,variable=slider_vel, command=slidervel_event)
 slider_velo.place(relx=0.34,rely=0.7,anchor=tkinter.NE)
 
 
 
 switch_am=customtkinter.StringVar(value="off")
 
-titulo_amoladora = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), text="Amoladora")
+titulo_amoladora = customtkinter.CTkLabel(tabview.tab(" Control Manual "), text="Amoladora")
 titulo_amoladora.place(relx=0.15,rely=0.42,anchor=tkinter.NE)
-switch_amoladora = customtkinter.CTkSwitch(tabview.tab("Control de los ejes"), text=" ",command=state_amoladora,variable=switch_am,onvalue="on",offvalue="off")
+switch_amoladora = customtkinter.CTkSwitch(tabview.tab(" Control Manual "), text=" ",command=state_amoladora,variable=switch_am,onvalue="on",offvalue="off")
 switch_amoladora.place(relx=0.2,rely=0.5,anchor=tkinter.NE)
 
 
 switch_li=customtkinter.StringVar(value="off")
 
-titulo_lijas = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), text="Lijas")
+titulo_lijas = customtkinter.CTkLabel(tabview.tab(" Control Manual "), text="Lijas")
 titulo_lijas.place(relx=0.24,rely=0.42,anchor=tkinter.NE)
-switch_lijas = customtkinter.CTkSwitch(tabview.tab("Control de los ejes"), text=" ",command=state_lijas,variable=switch_li,onvalue="on",offvalue="off")
+switch_lijas = customtkinter.CTkSwitch(tabview.tab(" Control Manual "), text=" ",command=state_lijas,variable=switch_li,onvalue="on",offvalue="off")
 switch_lijas.place(relx=0.34,rely=0.5,anchor=tkinter.NE)
 
 
 switch_puli=customtkinter.StringVar(value="off")
 
-titulo_puli = customtkinter.CTkLabel(tabview.tab("Control de los ejes"), text="Pulidora")
+titulo_puli = customtkinter.CTkLabel(tabview.tab(" Control Manual "), text="Pulidora")
 titulo_puli.place(relx=0.4,rely=0.42,anchor=tkinter.NE)
-switch_puli = customtkinter.CTkSwitch(tabview.tab("Control de los ejes"), text=" ",command=state_pulidora,variable=switch_puli,onvalue="on",offvalue="off")
+switch_puli = customtkinter.CTkSwitch(tabview.tab(" Control Manual "), text=" ",command=state_pulidora,variable=switch_puli,onvalue="on",offvalue="off")
 switch_puli.place(relx=0.47,rely=0.5,anchor=tkinter.NE)
 
 
-apagar_rasp = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Apagar Interfaz",fg_color="red",hover_color="red" ,command=apagar_raspberry)
+apagar_rasp = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="Apagar Interfaz",fg_color="red",hover_color="red" ,command=apagar_raspberry)
 apagar_rasp.place(relx=0.207,rely=0.85,anchor=tkinter.NE)
     
-exit_interfaz = customtkinter.CTkButton(tabview.tab("Control de los ejes"),text="Salir de la Interfaz", fg_color="red",hover_color="red",command=salir_interfaz)
+exit_interfaz = customtkinter.CTkButton(tabview.tab(" Control Manual "),text="Salir de la Interfaz", fg_color="red",hover_color="red",command=salir_interfaz)
 exit_interfaz.place(relx=0.427,rely=0.85,anchor=tkinter.NE)
 
 
