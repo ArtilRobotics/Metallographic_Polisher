@@ -432,6 +432,26 @@ void loop()
         datoT[0] = 0;
         break;
 
+    case 14:
+        digitalWrite(Bomba_Corte, HIGH);
+        datoT[0] = 0;
+        break;
+
+    case 15:
+        digitalWrite(Bomba_Corte, LOW);
+        datoT[0] = 0;
+        break;
+
+    case 16:
+        digitalWrite(Bomba_Pulido, HIGH);
+        datoT[0] = 0;
+        break;
+
+    case 17:
+        digitalWrite(Bomba_Pulido, LOW);
+        datoT[0] = 0;
+        break;
+
     default:
         break;
     }
