@@ -46,7 +46,7 @@ void corte()
     Ejes_Pulidora.linear(1, longitud, 100 + diametro, 0, 0);
     digitalWrite(Rele_Amola, HIGH);
     delay(200);
-    for (int n = 115 + diametro; n < 138; n++)
+    for (int n = 115 + diametro; n < 145; n++)
     {
         Serial.write("6,0,0,0,0.5");
         Serial.write('\n');
