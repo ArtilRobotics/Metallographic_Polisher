@@ -345,29 +345,44 @@ def state_pulidora():
         arduino.flush()
 
 def state_bomba1():
-    if switch_li.get() == "on":
-        dato="14"
-        print("Bomba 1 Encendida")
+    if switch_bom1.get() == "on":
+        dato="15"
+        print(dato)
         arduino.write((dato + '\n').encode())
         arduino.flush()
-    elif switch_li.get() == "off":
-        dato="15"
-        print("Bomba 1 Apagado")
+    elif switch_bom1.get() == "off":
+        dato="14"
+        print(dato)
         arduino.write((dato + '\n').encode())
         arduino.flush()
 
 
 def state_bomba2():
-    if switch_li.get() == "on":
-        dato="16"
-        print("Bomba 2 Encendida")
-        arduino.write((dato + '\n').encode())
-        arduino.flush()
-    elif switch_li.get() == "off":
+    if switch_bom2.get() == "on":
         dato="17"
-        print("Bomba 2 Apagado")
+        print(dato)
         arduino.write((dato + '\n').encode())
         arduino.flush()
+    elif switch_bom2.get() == "off":
+        dato="16"
+        print(dato)
+        arduino.write((dato + '\n').encode())
+        arduino.flush()
+
+def vel_grano_grueso():
+    dato="9,100"
+    arduino.write((dato + '\n').encode())
+    arduino.flush()
+
+def vel_grano_medio():
+    dato="9,80"
+    arduino.write((dato + '\n').encode())
+    arduino.flush()
+
+def vel_grano_fino():
+    dato="9,70"
+    arduino.write((dato + '\n').encode())
+    arduino.flush()
 
 
 def slidervel_event(valuevel):
@@ -731,11 +746,21 @@ pasos_box.place(relx=0.947,rely=0.6,anchor=tkinter.NE)
 
 slider_vel= tkinter.IntVar(value=0)
 
-velocidad = customtkinter.CTkLabel(tabview.tab(" Control Manual "), text="Velocidad de las lijas")
-velocidad.place(relx=0.207,rely=0.67,anchor=tkinter.NE)
-slider_velo = customtkinter.CTkSlider(tabview.tab(" Control Manual "),from_=0,to=100,variable=slider_vel, command=slidervel_event)
-slider_velo.place(relx=0.34,rely=0.75,anchor=tkinter.NE)
+# velocidad = customtkinter.CTkLabel(tabview.tab(" Control Manual "), text="Velocidad de las lijas")
+# velocidad.place(relx=0.207,rely=0.67,anchor=tkinter.NE)
+# slider_velo = customtkinter.CTkSlider(tabview.tab(" Control Manual "),from_=0,to=100,variable=slider_vel, command=slidervel_event)
+# slider_velo.place(relx=0.34,rely=0.75,anchor=tkinter.NE)
 
+
+vel_radio_group = customtkinter.CTkLabel(tabview.tab("Control Manual"), text="Velocidad Lijas")
+vel_radio_group.place(relx=0.547,rely=0.05,anchor=tkinter.NE)
+vel_menu = tkinter.IntVar(value=3)
+radio_button_1 = customtkinter.CTkRadioButton(tabview.tab("Control Manual"), text="Grano Grueso",command=vel_grano_grueso,variable=vel_menu, value=0)
+radio_button_1.place(relx=0.547,rely=0.15,anchor=tkinter.NE)
+radio_button_2 = customtkinter.CTkRadioButton(tabview.tab("Control Manual"), text="Grano Medio",command=vel_grano_medio,variable=vel_menu, value=1)
+radio_button_2.place(relx=0.547,rely=0.25,anchor=tkinter.NE)
+radio_button_3 = customtkinter.CTkRadioButton(tabview.tab("Control Manual"), text="Grano Fino",command=vel_grano_fino,variable=vel_menu, value=2)
+radio_button_3.place(relx=0.547,rely=0.35,anchor=tkinter.NE)
 
 
 switch_am=customtkinter.StringVar(value="off")

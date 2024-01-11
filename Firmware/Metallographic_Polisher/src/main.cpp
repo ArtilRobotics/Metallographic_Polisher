@@ -301,6 +301,8 @@ void setup()
     digitalWrite(A4, LOW);
     digitalWrite(A5, LOW);
     digitalWrite(12, LOW);
+    digitalWrite(51, HIGH);
+    digitalWrite(53, HIGH);
     Ejes_Pulidora.VelMotors(1000000);
     myservo.attach(A6);
     myservo.write(60);

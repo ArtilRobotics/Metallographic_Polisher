@@ -9,6 +9,8 @@ void Metallographic::init()
     pinMode(Rele_Lijas, OUTPUT);
     pinMode(Rele_Refrige, OUTPUT);
     pinMode(Buzzer, OUTPUT);
+    pinMode(Bomba_Corte, OUTPUT);
+    pinMode(Bomba_Pulido, OUTPUT);
     pinMode(FC_X, INPUT_PULLUP);
     pinMode(FC_Y, INPUT_PULLUP);
     pinMode(FC_Z, INPUT_PULLUP);
