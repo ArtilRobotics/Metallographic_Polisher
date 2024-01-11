@@ -62,7 +62,7 @@ def actual_posiciones():
         if  posx!= '':
             valx=float(posx)
         if posy!= '':
-            valy=floa|t(posy)
+            valy=float(posy)
         if posz!= '':
             valz=float(posz)
         if pose!= '':
@@ -752,15 +752,15 @@ slider_vel= tkinter.IntVar(value=0)
 # slider_velo.place(relx=0.34,rely=0.75,anchor=tkinter.NE)
 
 
-vel_radio_group = customtkinter.CTkLabel(tabview.tab("Control Manual"), text="Velocidad Lijas")
-vel_radio_group.place(relx=0.547,rely=0.05,anchor=tkinter.NE)
-vel_menu = tkinter.IntVar(value=3)
-radio_button_1 = customtkinter.CTkRadioButton(tabview.tab("Control Manual"), text="Grano Grueso",command=vel_grano_grueso,variable=vel_menu, value=0)
-radio_button_1.place(relx=0.547,rely=0.15,anchor=tkinter.NE)
-radio_button_2 = customtkinter.CTkRadioButton(tabview.tab("Control Manual"), text="Grano Medio",command=vel_grano_medio,variable=vel_menu, value=1)
-radio_button_2.place(relx=0.547,rely=0.25,anchor=tkinter.NE)
-radio_button_3 = customtkinter.CTkRadioButton(tabview.tab("Control Manual"), text="Grano Fino",command=vel_grano_fino,variable=vel_menu, value=2)
-radio_button_3.place(relx=0.547,rely=0.35,anchor=tkinter.NE)
+vel_radio_group = customtkinter.CTkLabel(tabview.tab(" Control Manual "), text="Velocidad Lijas")
+vel_radio_group.place(relx=0.201,rely=0.67,anchor=tkinter.NE)
+vel_menu = tkinter.IntVar(value=0)
+radio_button_1 = customtkinter.CTkRadioButton(tabview.tab(" Control Manual "), text="Grano Grueso",command=vel_grano_grueso,variable=vel_menu, value=0)
+radio_button_1.place(relx=0.2,rely=0.75,anchor=tkinter.NE)
+radio_button_2 = customtkinter.CTkRadioButton(tabview.tab(" Control Manual "), text="Grano Medio",command=vel_grano_medio,variable=vel_menu, value=1)
+radio_button_2.place(relx=0.35,rely=0.75,anchor=tkinter.NE)
+radio_button_3 = customtkinter.CTkRadioButton(tabview.tab(" Control Manual "), text="Grano Fino",command=vel_grano_fino,variable=vel_menu, value=2)
+radio_button_3.place(relx=0.5,rely=0.75,anchor=tkinter.NE)
 
 
 switch_am=customtkinter.StringVar(value="off")
