@@ -50,7 +50,6 @@ def recibirDatos():
             posz = (DATASPLIT[3])
             pose = (DATASPLIT[4])
             
-    
         actual_posiciones()
         proceso_actual()
         progresion_proceso()
@@ -63,7 +62,7 @@ def actual_posiciones():
         if  posx!= '':
             valx=float(posx)
         if posy!= '':
-            valy=float(posy)
+            valy=floa|t(posy)
         if posz!= '':
             valz=float(posz)
         if pose!= '':
@@ -333,7 +332,7 @@ def state_pulidora():
     if switch_puli.get() == "on":
         valb=2
         dato="20,0,0,0,0,2"
-        print(dato)
+        print("Pulidora Encendida")
         arduino.write((dato + '\n').encode())
         arduino.flush()
 
@@ -341,19 +340,19 @@ def state_pulidora():
 
         dato="20,0,0,0,0,3"
         valb=3
-        print(dato)
+        print("Pulidora Apagada")
         arduino.write((dato + '\n').encode())
         arduino.flush()
 
 def state_bomba1():
     if switch_li.get() == "on":
         dato="14"
-        print("Lija Encendida")
+        print("Bomba 1 Encendida")
         arduino.write((dato + '\n').encode())
         arduino.flush()
     elif switch_li.get() == "off":
         dato="15"
-        print("Lija Apagado")
+        print("Bomba 1 Apagado")
         arduino.write((dato + '\n').encode())
         arduino.flush()
 
@@ -361,12 +360,12 @@ def state_bomba1():
 def state_bomba2():
     if switch_li.get() == "on":
         dato="16"
-        print("Lija Encendida")
+        print("Bomba 2 Encendida")
         arduino.write((dato + '\n').encode())
         arduino.flush()
     elif switch_li.get() == "off":
         dato="17"
-        print("Lija Apagado")
+        print("Bomba 2 Apagado")
         arduino.write((dato + '\n').encode())
         arduino.flush()
 
@@ -540,8 +539,6 @@ def inspeccion():
         dato="13"
         arduino.write((dato + '\n').encode())
         arduino.flush()
-
-
 
 
 
