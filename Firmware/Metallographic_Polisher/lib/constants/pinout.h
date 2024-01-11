@@ -35,8 +35,8 @@
 #define MotorX_dir_pin 3
 #define MotorX_limit_switch_pin  14
 
-#define MotorY_step_pin 4
-#define MotorY_dir_pin  5
+#define MotorY_step_pin 49 //5
+#define MotorY_dir_pin  4
 #define MotorY_limit_switch_pin  15
 
 #define MotorZ_step_pin  6
