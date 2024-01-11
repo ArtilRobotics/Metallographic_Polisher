@@ -412,7 +412,7 @@ void loop()
         break;
 
     case 9:
-        map_vel = map(datoT[1], 0, 100, 60, 160);
+        map_vel = map(datoT[1], 0, 100, 60, 140);
         myservo.write(map_vel);
         datoT[0] = 0;
         break;

@@ -375,12 +375,12 @@ def vel_grano_grueso():
     arduino.flush()
 
 def vel_grano_medio():
-    dato="9,80"
+    dato="9,75"
     arduino.write((dato + '\n').encode())
     arduino.flush()
 
 def vel_grano_fino():
-    dato="9,70"
+    dato="9,50"
     arduino.write((dato + '\n').encode())
     arduino.flush()
 

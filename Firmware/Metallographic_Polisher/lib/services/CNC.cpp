@@ -275,6 +275,7 @@ void line(float newx, float newy, float newz, float newe, float newb)
       maxsteps = a[i].absdelta;
     // set the direction once per movement
     digitalWrite(motors[i].dir_pin, a[i].delta > 0 ? HIGH : LOW);
+    digitalWrite(motors[i].dir_pin, a[i].delta > 0 ? HIGH : LOW);
     delay(5);
   }
 
@@ -346,6 +347,7 @@ void line(float newx, float newy, float newz, float newe, float newb)
   Serial.println(F("< Done."));
 #endif
   where();
+  position(newx, newy, newz, newe, newb);
   position(newx, newy, newz, newe, newb);
   dtostrf(px,4,2,posx);
   dtostrf(py,4,2,posy);
